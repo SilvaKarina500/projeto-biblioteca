@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ResultSetHeader } from 'mysql2';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateLivroDto } from './dto/create-livro.dto';
- 
+import { NotFoundError } from 'rxjs';
+
+
 @Injectable()
 export class LivrosService {
     // Injetamos o DatabaseService dentro do LivrosService,
@@ -39,5 +41,37 @@ export class LivrosService {
             }
         };
     }
+    // O objetivo dessa função será a exibição de todos os livros cadastrados
+    async listarTodos(){
+        // A constante resultado terá armazenada todos os livros cadastrados na tabela 'livro' do banco de dados.
+        const resultado = await this.databasService.query(
+            'SELECT * FROM livro'
+        );
+        return resultado;
+
+    }
+    //Realizará a busca de um livro através do ID gerado pelo banco de dados
+    async buscaPorId(id: number){
+        const resultado = await this.databasService.query(
+            'SELECT * FROM livro WHERE id = ?', [id]
+        ) as RowDataPacket[];
+        // o rowdatapacket[] informa ao TypeScrip que o resultado da consulta será tratado como
+        //uma lista de registros retornados pelo banco de dados.
+
+        // Essa condição irá verificar se a consulta não encontrar nenhum livro.
+        //Se a lista estiver vazia, seu tamanho (length) será igual a 0
+        if (resultado.length === 0) {
+            // Interronpe a execução da requisição e retorna uma resposta HTTP 404 (not
+            // Found), informando que o livcro solicitado não foi encohntrado.
+            throw new NotFoundException(
+                'Livro não encontrado'
+            );
+        }
+        return resultado[0];
+
+    }
+
+   
+
 }
  

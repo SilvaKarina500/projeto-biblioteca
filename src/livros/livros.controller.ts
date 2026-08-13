@@ -1,4 +1,4 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import { Controller, Body, Post, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { CreateLivroDto } from './dto/create-livro.dto';
 import { LivrosService } from './livros.service';
  
@@ -14,5 +14,18 @@ export class LivrosController {
         // O DTO define como esses dados deverão ser validados.
         return this.livroService.criar(createLivroDto);
     }
+    // Define o endpoint GET/livros
+    @Get()
+    listarTodos(){
+        return this.livroService.listarTodos();
+    };
+
+    //Define o endpoint GET/livros/:id
+    @Get(':id')
+    buscaPorId(
+        @Param('id', ParseIntPipe) id: number
+
+    ) {
+        return this.livroService.buscaPorId(id);
+    }
 }
- 
