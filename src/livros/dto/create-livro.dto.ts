@@ -1,9 +1,9 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsString, Max, Min } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsString, Max } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateLivroDto {
-    @IsString() // tem que ser string
-    @IsNotEmpty() //não pode ser estar vazio
+    @IsString() // Tem que ser string
+    @IsNotEmpty() // Não pode estar vazio
     // ApiProperty serve para informar um exemplo de preenchimento para este campo.
     @ApiProperty({
         example: 'Dom Casmurro',
@@ -19,15 +19,15 @@ export class CreateLivroDto {
     })
     autor: string;
 
-    @IsInt() // tem que ser numero inteiro
-    @Max(2100, {message: 'O ano deve ser menor ou igual a 2100'}) // valor maximo
+    @IsInt() // Tem que ser número inteiro
+    @Max(2100, {message: 'O ano deve ser menor ou igual a 2100'}) // Valor máximo
     @ApiProperty({
         example: 1800,
         description: 'Ano de publicação do livro'
     })
     ano: number;
 
-    @IsBoolean() // o valor é boleano
+    @IsBoolean() // O valor é boleano
     @ApiProperty({
         example: true,
         description: 'Disponibilidade do livro'

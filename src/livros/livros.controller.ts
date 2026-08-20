@@ -2,15 +2,16 @@ import { Controller, Body, Post, Get, Param, ParseIntPipe, Put, Delete } from '@
 import { CreateLivroDto } from './dto/create-livro.dto';
 import { LivrosService } from './livros.service';
 import { updateLivroDto } from './dto/update-livros.dto';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-
- @ApiTags('Livros') // Coloca uma Tag chamada "Livros"
+@ApiTags('Livros') // Coloca uma Tag chamada "Livros"
 @Controller('livros')
 export class LivrosController {
-    // Injetamos o LivrosService com depêndencia para o controller acessar
-    constructor (private readonly livroService : LivrosService){}
- 
+    // Injetamos o LivrosService como dependência para o controller acessar
+    constructor (private readonly livrosService : LivrosService){}
+
     // Define o endpoint POST/livros
     @Post()
     // O ApiOperation serve para dizer a ação que o endpoint faz, qual o propósito dele.
@@ -23,13 +24,16 @@ export class LivrosController {
     })
     @ApiResponse({
         status: 404,
-        description:'Não foi possível cadastrar o livro'
+        description: 'Não foi possível cadastrar o livro'
     })
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
     criar(@Body() createLivroDto : CreateLivroDto){
-        // O @Body captura os dados enviados no corpo da requisição
+        // O @Body captura od dados enviados no corpo da requisição
         // O DTO define como esses dados deverão ser validados.
-        return this.livroService.criar(createLivroDto);
+        return this.livrosService.criar(createLivroDto);
     }
+
     // Define o endpoint GET/livros
     @Get()
     @ApiOperation({
@@ -41,13 +45,13 @@ export class LivrosController {
     })
     @ApiResponse({
         status: 404,
-        description:'Não foi possível retornar a lista de livros'
+        description: 'Não foi possível retornar a lista de livros'
     })
     listarTodos(){
-        return this.livroService.listarTodos();
+        return this.livrosService.listarTodos();
     };
 
-    //Define o endpoint GET/livros/:id
+    // Define o endpoint GET/livros/:id
     @Get(':id')
     @ApiOperation({
         summary: 'Localizar livro pelo ID'
@@ -58,18 +62,17 @@ export class LivrosController {
     })
     @ApiResponse({
         status: 404,
-        description:'Livro não encontrado'
+        description: 'Livro não encontrado'
     })
     buscaPorId(
         @Param('id', ParseIntPipe) id: number
-
     ) {
-        return this.livroService.buscaPorId(id);
+        return this.livrosService.buscaPorId(id);
     }
- 
+
     // Define o endpoint PUT /livros/:id
     @Put(':id')
-     @ApiOperation({
+    @ApiOperation({
         summary: 'Atualizar livro pelo ID'
     })
     @ApiResponse({
@@ -78,16 +81,16 @@ export class LivrosController {
     })
     @ApiResponse({
         status: 404,
-        description:'Não foi possível atualizar o livro'
+        description: 'Não foi possível atualizar o livro'
     })
-    
     atualizar(@Param('id') id: number, @Body() dados:updateLivroDto){
-        return this.livroService.atualizar(id, dados);
+        return this.livrosService.atualizar(id, dados);
     }
 
+    // Define o endpoint DELETE /livros/:id
     @Delete(':id')
-     @ApiOperation({
-        summary: 'Remover um livro por ID'
+    @ApiOperation({
+        summary: 'Remover livro por ID'
     })
     @ApiResponse({
         status: 201,
@@ -95,9 +98,10 @@ export class LivrosController {
     })
     @ApiResponse({
         status: 404,
-        description:'Não foi possível remover o livro'
+        description: 'Não foi possível remover o livro'
     })
     remover(@Param('id') id:number){
-        return this.livroService.remover(id)
+        return this.livrosService.remover(id);
     }
+
 }
