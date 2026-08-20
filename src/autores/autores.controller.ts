@@ -2,7 +2,9 @@ import { Controller, Body, Post, Get, Param, ParseIntPipe, Put, Delete } from '@
 import { CreateAutorDto } from './dto/create-autor.dto';
 import { AutoresService } from './autores.service';
 import { updateAutorDto } from './dto/update-autor.dto';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth  } from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
 
  @ApiTags('Autor') // Coloca uma Tag chamada "Autor"
 @Controller('autores')
@@ -25,6 +27,8 @@ export class AutoresController {
         status: 404,
         description:'Não foi possível cadastrar o autor'
     })
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
     criar(@Body() createAutorDto: CreateAutorDto) {
         // O @Body captura os dados enviados no corpo da requisição
         // O DTO define como esses dados deverão ser validados.
