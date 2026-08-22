@@ -25,7 +25,7 @@ async function bootstrap() {
   .build() //Comando para construção
   const documento = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api_biblioteca', app, documento);
-
+ app.enableCors()
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -26,8 +26,8 @@ export class LivrosController {
         status: 404,
         description: 'Não foi possível cadastrar o livro'
     })
-    @UseGuards(AuthGuard)
-    @ApiBearerAuth()
+    //@UseGuards(AuthGuard)
+    //@ApiBearerAuth()
     criar(@Body() createLivroDto : CreateLivroDto){
         // O @Body captura od dados enviados no corpo da requisição
         // O DTO define como esses dados deverão ser validados.
